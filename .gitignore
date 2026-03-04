@@ -1,0 +1,88 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+build/
+develop-eggs/
+dist/
+downloads/
+eggs/
+.eggs/
+lib/
+lib64/
+parts/
+sdist/
+var/
+wheels/
+*.egg-info/
+.installed.cfg
+*.egg
+
+# 视频文件
+*.mp4
+*.flv
+*.webm
+*.avi
+*.mov
+*.mkv
+
+# 音频文件
+*.mp3
+*.wav
+*.aac
+*.m4a
+
+# 字幕文件
+*.srt
+*.ass
+*.vtt
+
+# JSON 数据
+*_full.json
+*_danmaku.json
+*_subtitles.json
+*_timeline.json
+
+# 临时文件
+*.tmp
+*_video.tmp
+*_audio.tmp
+*.log
+
+# 切分输出目录
+clips/
+*_clips/
+output/
+
+# Cookie 文件（敏感）
+*bili_cookie*
+*bilibili-cookie*
+*.cookie
+cookie.txt
+
+# 编辑器
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# macOS
+.DS_Store
+
+# 测试
+.pytest_cache/
+.coverage
+htmlcov/
+test_output/
+*_test.mp4
+test_*.mp4
+
+# 测试配置（排除真实配置，保留示例）
+tests/config.py
+!tests/config.example.py
