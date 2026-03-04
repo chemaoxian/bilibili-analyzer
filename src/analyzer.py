@@ -128,12 +128,16 @@ class BiliAnalyzer:
         return danmaku_list
 
     def get_subtitles(self) -> List[Dict[str, Any]]:
-        """获取视频字幕（CC 字幕）"""
+        """获取视频字幕（CC 字幕和 AI 字幕）
+
+        注意：AI 字幕需要登录 Cookie 才能获取
+        """
         info = self.get_video_info()
         cid = info["pages"][0]["cid"] if info.get("pages") else info["cid"]
 
+        # 使用带 Cookie 的请求头获取字幕（AI 字幕需要登录）
         url = f"https://api.bilibili.com/x/player/v2?cid={cid}&bvid={self.bv_id}"
-        response = requests.get(url, headers=self._get_headers())
+        response = requests.get(url, headers=self._get_headers(with_cookie=True))
         data = response.json()
 
         if data.get("code") != 0:
@@ -144,7 +148,8 @@ class BiliAnalyzer:
 
         for sub in subtitle_info:
             lan = sub.get("lan", "")
-            sub_url = sub.get("content_url", "")
+            # AI 字幕使用 subtitle_url 字段，CC 字幕使用 content_url 字段
+            sub_url = sub.get("subtitle_url") or sub.get("content_url", "")
             if sub_url:
                 full_url = f"https:{sub_url}" if sub_url.startswith("//") else sub_url
                 sub_response = requests.get(full_url, headers=self._get_headers())

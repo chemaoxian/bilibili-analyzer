@@ -9,6 +9,10 @@ B 站视频分析工具 - 命令行入口
     python cli.py danmaku BV1zZcYz1EMy     # 提取弹幕
     python cli.py subtitle BV1zZcYz1EMy    # 提取字幕
     python cli.py clip BV1zZcYz1EMy        # 切分视频
+
+Cookie 配置:
+    默认从 .cache/credentials/bilibili-cookie.txt 读取
+    或使用 -c/--cookie 参数指定
 """
 
 import argparse
@@ -23,15 +27,38 @@ from subtitle import SubtitleProcessor
 from clipper import VideoClipper, VideoClip
 
 
+# 默认 Cookie 路径（本地安全存储）
+DEFAULT_COOKIE_PATH = os.path.join(
+    os.path.dirname(os.path.dirname(os.path.dirname(__file__))),
+    ".cache",
+    "credentials",
+    "bilibili-cookie.txt"
+)
+
+
+def get_cookie_file(cookie_arg):
+    """获取 Cookie 文件路径
+
+    优先级：命令行参数 > 默认路径 > None
+    """
+    if cookie_arg:
+        return cookie_arg
+    if os.path.exists(DEFAULT_COOKIE_PATH):
+        return DEFAULT_COOKIE_PATH
+    return None
+
+
 def cmd_analyze(args):
     """分析视频命令"""
-    analyzer = BiliAnalyzer(args.bv_id, cookie_file=args.cookie)
+    cookie_file = get_cookie_file(args.cookie)
+    analyzer = BiliAnalyzer(args.bv_id, cookie_file=cookie_file)
     analyzer.analyze(output_dir=args.output)
 
 
 def cmd_download(args):
     """下载视频命令"""
-    analyzer = BiliAnalyzer(args.bv_id, cookie_file=args.cookie)
+    cookie_file = get_cookie_file(args.cookie)
+    analyzer = BiliAnalyzer(args.bv_id, cookie_file=cookie_file)
 
     output = args.output or f"{args.bv_id}.mp4"
     if not analyzer.download_video(output):
@@ -148,14 +175,14 @@ def main():
     p_analyze = subparsers.add_parser("analyze", help="分析视频，生成报告")
     p_analyze.add_argument("bv_id", help="BV 号，如 BV1zZcYz1EMy")
     p_analyze.add_argument("-o", "--output", default=".", help="输出目录")
-    p_analyze.add_argument("-c", "--cookie", help="Cookie 文件路径")
+    p_analyze.add_argument("-c", "--cookie", help="Cookie 文件路径（默认：.cache/credentials/bilibili-cookie.txt）")
     p_analyze.set_defaults(func=cmd_analyze)
 
     # download 命令
     p_download = subparsers.add_parser("download", help="下载视频")
     p_download.add_argument("bv_id", help="BV 号")
     p_download.add_argument("-o", "--output", help="输出文件路径")
-    p_download.add_argument("-c", "--cookie", help="Cookie 文件路径")
+    p_download.add_argument("-c", "--cookie", help="Cookie 文件路径（默认：.cache/credentials/bilibili-cookie.txt）")
     p_download.set_defaults(func=cmd_download)
 
     # danmaku 命令
