@@ -137,6 +137,7 @@ python3 -m unittest tests.test_analyzer.TestBiliAnalyzerInit.test_init_with_bv_i
 - **总测试数**: 87
 - **单元测试**: 86（Mock 测试）
 - **集成测试**: 1（需配置 BV 号和 Cookie）
+- **当前状态**: ✅ 全部通过（最新测试：2026-03-10）
 
 ## 常见问题
 
