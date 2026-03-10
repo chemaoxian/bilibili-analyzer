@@ -29,6 +29,9 @@ class BiliAnalyzer:
         subtitles = analyzer.get_subtitles()
     """
 
+    # BV 号格式正则：BV 开头 + 10 位 base58 字符（排除 0、O、I、l）
+    BV_ID_PATTERN = re.compile(r'^BV1[1-9A-HJ-NP-Za-km-z]{9}$')
+
     BASE_HEADERS = {
         "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
         "Referer": "https://www.bilibili.com",
@@ -44,7 +47,15 @@ class BiliAnalyzer:
         Args:
             bv_id: B 站视频 BV 号，如 "BV1zZcYz1EMy"
             cookie_file: Cookie 文件路径（用于下载高质量视频）
+
+        Raises:
+            ValueError: 当 BV 号格式无效时
         """
+        if not self.BV_ID_PATTERN.match(bv_id):
+            raise ValueError(
+                f"无效的 BV 号格式：{bv_id}。"
+                "BV 号格式应为 BV 开头 + 10 位字母数字组合，例如：BV1zZcYz1EMy"
+            )
         self.bv_id = bv_id
         self.cookie_file = cookie_file
         self._info_cache: Optional[Dict] = None

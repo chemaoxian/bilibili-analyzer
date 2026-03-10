@@ -100,10 +100,22 @@ class VideoClipper:
 
         Returns:
             输出文件路径
+
+        Raises:
+            ValueError: 当输出路径不安全时（目录穿越风险）
         """
         if not output_path:
             os.makedirs(self.output_dir, exist_ok=True)
             output_path = os.path.join(self.output_dir, f"{clip.name}.mp4")
+
+        # 路径安全检查：防止目录穿越
+        output_path = os.path.normpath(output_path)
+        output_dir = os.path.normpath(self.output_dir)
+        if not os.path.commonpath([output_dir, output_path]) == output_dir:
+            raise ValueError(
+                f"输出路径必须在输出目录内：{self.output_dir}。"
+                f"检测到不安全的路径：{output_path}"
+            )
 
         cmd = [
             "ffmpeg", "-y",
